@@ -3,6 +3,7 @@ import { env } from "./env";
 import { InitialPostgresSchema1791417600000 } from "../migrations/1791417600000-InitialPostgresSchema";
 import { RenameLegacyPostgresTables1791417601000 } from "../migrations/1791417601000-RenameLegacyPostgresTables";
 import { AddTeacherRequestStatus1791417602000 } from "../migrations/1791417602000-AddTeacherRequestStatus";
+import { AddLessonContent1791417603000 } from "../migrations/1791417603000-AddLessonContent";
 import {User} from "../models/User"
 import { Course } from "../models/Course";
 import { Enrollment } from "../models/Enrollment";
@@ -27,5 +28,6 @@ export const AppDataSource= new DataSource({
       InitialPostgresSchema1791417600000,
       RenameLegacyPostgresTables1791417601000,
       AddTeacherRequestStatus1791417602000,
+      AddLessonContent1791417603000,
     ],
 })

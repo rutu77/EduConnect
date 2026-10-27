@@ -46,6 +46,18 @@ The repository does not configure a hosting provider, backup scheduler, alerting
 
 `GET /course` returns only published courses that are not deleted. It supports `page` (default `1`), `limit` (default `20`, maximum `50`), and `search` (up to 100 characters, matching title and description). The response contains `data` and `pagination` with the requested page, limit, total matching courses, and total pages.
 
+## Lesson content
+
+Lessons can include optional plain-text `content` of up to 50,000 characters. Include it when creating a lesson with `POST /lesson`, or add, change, or clear it with `PUT /lesson/:id` (use an empty string to clear it). The content is returned with the lesson and can later be used as source material for a course-aware AI tutor.
+
+Lesson videos can be uploaded as MP4 or WebM files up to 100 MB when creating or editing a lesson. Files are saved in the backend `uploads` folder and served from `/uploads`. This is suitable for local development and demos; production deployments need persistent file storage or a cloud object-storage service so uploads survive deploys and restarts.
+
+## Course AI tutor
+
+The authenticated `POST /ai/courses/:courseId/questions` endpoint finds up to three relevant passages from the course's lesson text and sends them with the learner's question to the Gemini API. Learners must be enrolled in the course; its creator and administrators can also use the endpoint. The AI answer includes the lesson titles used as sources, and the endpoint is limited to 20 questions per IP address every 10 minutes.
+
+Set `GEMINI_API_KEY` in `backend/.env` to enable answers. `GEMINI_MODEL` is optional and defaults to `gemini-2.5-flash`. Keep the API key on the server and never put it in the frontend. Relevant lesson text and the question are sent to Google; do not use this feature with sensitive course material. Retrieval currently uses simple keyword matching over lesson text, so this is a beginner-friendly RAG foundation rather than embedding-based semantic search. Add plain-text content to lessons for the tutor to answer from; video files are not transcribed.
+
 ## Quiz and progress responses
 
 Quiz responses include only course/creator summaries. Correct answers and explanations are returned only to administrators and the teacher who owns the quiz's course; learner responses omit those fields. Progress endpoints return user and quiz summaries instead of full related database entities.

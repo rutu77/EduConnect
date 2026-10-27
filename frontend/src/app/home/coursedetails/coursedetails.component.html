@@ -72,6 +72,32 @@
           <span class="pi pi-chevron-right" aria-hidden="true"></span>
         </button>
       </div>
+
+      <section class="content-section ai-section" aria-labelledby="course-tutor-heading">
+        <div class="section-heading">
+          <div><p class="eyebrow">ASK ABOUT THE LESSONS</p><h2 id="course-tutor-heading">Course AI tutor</h2></div>
+        </div>
+        <p class="ai-notice">Answers are based on this course's written lesson content. The relevant text and your question are sent to the configured AI provider.</p>
+        <form class="ai-question-form" (ngSubmit)="askCourseQuestion()">
+          <label for="course-ai-question">Your question</label>
+          <textarea id="course-ai-question" name="question" [(ngModel)]="aiQuestion"
+            maxlength="1000" rows="3" required placeholder="Ask a question about this course"></textarea>
+          <button class="primary-action" type="submit"
+            [disabled]="!aiQuestion.trim() || isAskingAI">
+            {{ isAskingAI ? 'Thinking…' : 'Ask the course tutor' }}
+          </button>
+        </form>
+        <p *ngIf="aiError" class="ai-error" role="alert">{{ aiError }}</p>
+        <div *ngIf="isAskingAI" class="ai-loading" role="status">Looking through the course lessons…</div>
+        <article *ngIf="aiAnswer" class="ai-answer">
+          <h3>Answer</h3>
+          <p>{{ aiAnswer }}</p>
+          <div *ngIf="aiSources.length > 0" class="ai-sources">
+            <strong>Sources</strong>
+            <ul><li *ngFor="let source of aiSources">{{ source.title }}</li></ul>
+          </div>
+        </article>
+      </section>
     </section>
 
     <section class="reviews-section">

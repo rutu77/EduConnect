@@ -18,6 +18,10 @@
     <source [src]="lesson.videoUrl">
     Your browser does not support embedded video.
   </video>
+  <section *ngIf="lesson.content" class="lesson-content">
+    <h2>Lesson content</h2>
+    <p>{{ lesson.content }}</p>
+  </section>
   <p *ngIf="!lesson.videoUrl" class="lesson-state">No video has been added to this lesson yet.</p>
 </article>
   

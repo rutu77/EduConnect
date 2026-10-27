@@ -48,7 +48,7 @@ export function validateBody(
           typeof value !== "string" ||
           !value.trim() ||
           (rule.minLength !== undefined && value.trim().length < rule.minLength) ||
-          (rule.maxLength !== undefined && value.trim().length > rule.maxLength)
+          (rule.maxLength !== undefined && value.length > rule.maxLength)
         ) {
           errors.push(`${field} must be non-empty text`);
           continue;

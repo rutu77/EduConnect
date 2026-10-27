@@ -22,6 +22,7 @@ export class UpdatelessonComponent implements OnInit{
   updateLessonForm!: FormGroup;
   isSaving = false;
   isLoadingLesson = false;
+  selectedVideo: File | null = null;
 
   constructor(private _course:CourseService){}
 
@@ -30,6 +31,7 @@ export class UpdatelessonComponent implements OnInit{
     this.updateLessonForm= new FormGroup({
       title: new FormControl('', [Validators.required]),
       videoUrl: new FormControl(''),
+      content: new FormControl(''),
       duration: new FormControl(0, [Validators.required, Validators.min(0)]),
     })
 
@@ -47,6 +49,7 @@ export class UpdatelessonComponent implements OnInit{
           this.updateLessonForm.patchValue({
             title: response.data.title,
             videoUrl: response.data.videoUrl,
+            content: response.data.content ?? '',
             duration: response.data.duration ?? 0,
           });
           this.isLoadingLesson = false;
@@ -77,11 +80,16 @@ export class UpdatelessonComponent implements OnInit{
     }
 
     this.isSaving = true;
-    this._course.updateLesson(this.lessonId, {
-      title,
-      videoUrl: String(values.videoUrl ?? '').trim(),
-      duration: Number(values.duration),
-    }).subscribe({
+    const lessonData = new FormData();
+    lessonData.append('title', title);
+    lessonData.append('videoUrl', String(values.videoUrl ?? '').trim());
+    lessonData.append('content', String(values.content ?? ''));
+    lessonData.append('duration', String(Number(values.duration)));
+    if (this.selectedVideo) {
+      lessonData.append('video', this.selectedVideo);
+    }
+
+    this._course.updateLesson(this.lessonId, lessonData).subscribe({
       next: () => {
         Swal.fire({
           title: 'Lesson Updated',
@@ -101,6 +109,11 @@ export class UpdatelessonComponent implements OnInit{
         this.isSaving = false;
       }
     });
+  }
+
+  onVideoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.selectedVideo = input.files?.[0] ?? null;
   }
 
 }

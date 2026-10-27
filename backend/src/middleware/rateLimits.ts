@@ -15,3 +15,14 @@ export const registrationRateLimit = rateLimit({
   legacyHeaders: false,
   message: { status: "error", message: "Too many registration attempts. Please try again later." },
 });
+
+export const courseQuestionRateLimit = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  limit: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    status: "error",
+    message: "Too many AI questions. Please try again later.",
+  },
+});

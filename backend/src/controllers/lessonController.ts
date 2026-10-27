@@ -1,13 +1,17 @@
 import { Request, Response } from "express";
 import { LessonService } from "../services/lessonService";
 import { AuthRequest } from "../types/authRequest";
+import { env } from "../config/env";
 
 const lessonService = new LessonService();
 
 export class LessonController {
   async createLesson(req: Request, res: Response) {
     const user = (req as AuthRequest).user;
-    const { title, videoUrl, duration } = req.body;
+    const { title, content, duration } = req.body;
+    const videoUrl = req.file
+      ? `${env.publicApiUrl}/uploads/${req.file.filename}`
+      : req.body.videoUrl;
     const courseId = Number(req.body.courseId);
     const parsedDuration = Number(duration);
     if (!user || typeof title !== "string" || !title.trim() ||
@@ -21,6 +25,7 @@ export class LessonController {
       const lesson = await lessonService.createlesson({
         title: title.trim(),
         videoUrl,
+        content,
         duration: parsedDuration,
         courseId,
       }, user);
@@ -55,8 +60,16 @@ export class LessonController {
 
   async updateLesson(req: Request, res: Response) {
     const lessonId = Number(req.params.id);
-    const { title, videoUrl, duration } = req.body;
-    const data: { title?: string; videoUrl?: string; duration?: number } = {};
+    const { title, content, duration } = req.body;
+    const videoUrl = req.file
+      ? `${env.publicApiUrl}/uploads/${req.file.filename}`
+      : req.body.videoUrl;
+    const data: {
+      title?: string;
+      videoUrl?: string;
+      content?: string;
+      duration?: number;
+    } = {};
     if (title !== undefined) {
       if (typeof title !== "string" || !title.trim()) {
         res.status(400).json({ message: "Lesson title must not be empty" });
@@ -65,6 +78,7 @@ export class LessonController {
       data.title = title.trim();
     }
     if (videoUrl !== undefined) data.videoUrl = videoUrl;
+    if (content !== undefined) data.content = content;
     if (duration !== undefined) {
       const parsedDuration = Number(duration);
       if (!Number.isFinite(parsedDuration) || parsedDuration < 0) {

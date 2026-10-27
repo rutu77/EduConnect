@@ -11,7 +11,8 @@
   font-weight: 650;
 }
 
-.update-lesson-form input {
+.update-lesson-form input,
+.update-lesson-form textarea {
   box-sizing: border-box;
   width: 100%;
   min-height: 2.8rem;
@@ -23,7 +24,13 @@
   font: inherit;
 }
 
-.update-lesson-form input:focus {
+.update-lesson-form textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.update-lesson-form input:focus,
+.update-lesson-form textarea:focus {
   border-color: #635bdb;
   outline: 3px solid rgb(99 91 219 / 14%);
 }

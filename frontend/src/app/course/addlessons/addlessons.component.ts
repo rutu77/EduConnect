@@ -26,12 +26,14 @@ export class AddlessonsComponent implements OnInit {
   isLoadingCourses = true;
   courseLoadError: string | null = null;
   isSaving = false;
+  selectedVideo: File | null = null;
 
 
   ngOnInit(): void {
     this.lessonForm= new FormGroup({
       title: new FormControl('', [Validators.required]),
       videoUrl: new FormControl(''),
+      content: new FormControl(''),
       duration: new FormControl(0, [Validators.required, Validators.min(0)]),
       courseId: new FormControl<number | null>(null, [Validators.required]),
     });
@@ -69,12 +71,17 @@ export class AddlessonsComponent implements OnInit {
     }
 
     this.isSaving = true;
-    this._course.addLesson({
-      title,
-      videoUrl: String(formValue.videoUrl ?? '').trim(),
-      duration: Number(formValue.duration),
-      courseId: Number(formValue.courseId),
-    }).subscribe({
+    const lessonData = new FormData();
+    lessonData.append('title', title);
+    lessonData.append('videoUrl', String(formValue.videoUrl ?? '').trim());
+    lessonData.append('content', String(formValue.content ?? ''));
+    lessonData.append('duration', String(Number(formValue.duration)));
+    lessonData.append('courseId', String(Number(formValue.courseId)));
+    if (this.selectedVideo) {
+      lessonData.append('video', this.selectedVideo);
+    }
+
+    this._course.addLesson(lessonData).subscribe({
         next: () => {
           Swal.fire({
             title: 'Lesson Added',
@@ -82,7 +89,8 @@ export class AddlessonsComponent implements OnInit {
             icon: 'success',
           });
           this.lessonAdded.emit();
-          this.lessonForm.reset({ title: '', videoUrl: '', duration: 0, courseId: null });
+          this.lessonForm.reset({ title: '', videoUrl: '', content: '', duration: 0, courseId: null });
+          this.selectedVideo = null;
           this.isSaving = false;
           this.changeDetector.detectChanges();
         },
@@ -98,5 +106,10 @@ export class AddlessonsComponent implements OnInit {
         },
       });
     }
+
+  onVideoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.selectedVideo = input.files?.[0] ?? null;
+  }
 
   }

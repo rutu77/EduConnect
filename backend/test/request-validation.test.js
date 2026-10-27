@@ -14,6 +14,9 @@ app.post("/courses", validateBody({
   price: { type: "number", required: true, min: 0 },
   isPublished: { type: "boolean", required: true },
 }), (req, res) => res.status(200).json(req.body));
+app.post("/lesson-content", validateBody({
+  content: { type: "string", maxLength: 50000 },
+}), (req, res) => res.status(200).json(req.body));
 
 let server;
 let baseUrl;
@@ -64,6 +67,27 @@ test("returns field errors for invalid request fields", async () => {
   const body = await response.json();
   assert.equal(body.message, "Request validation failed");
   assert.equal(body.errors.length, 2);
+});
+
+test("accepts lesson content up to 50,000 characters and rejects longer text", async () => {
+  const url = `${baseUrl}/lesson-content`;
+  const headers = { "content-type": "application/json" };
+  const validContent = "x".repeat(50000);
+
+  const accepted = await fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ content: validContent }),
+  });
+  assert.equal(accepted.status, 200);
+  assert.equal((await accepted.json()).content.length, 50000);
+
+  const rejected = await fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ content: `${validContent} ` }),
+  });
+  assert.equal(rejected.status, 400);
 });
 
 test("parses bounded course-catalog pagination and search parameters", () => {

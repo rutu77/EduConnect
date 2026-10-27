@@ -97,6 +97,7 @@ export interface ManagedEnrollment {
 export interface Lesson{
     id:number
     title:string
+    content?:string | null
     videoUrl:string
     duration?:number
     course:Course
@@ -107,8 +108,14 @@ export interface Lesson{
 export interface CreateLesson {
     title: string;
     videoUrl: string;
+    content?: string;
     duration: number;
     courseId: number;
+}
+
+export interface CourseQuestionAnswer {
+    answer: string;
+    sources: Array<{ lessonId: number; title: string }>;
 }
 
 export interface Quiz{

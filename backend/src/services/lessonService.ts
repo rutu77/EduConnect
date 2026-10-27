@@ -7,7 +7,13 @@ import { User } from "../models/User";
 export class LessonService{
 
     async createlesson(
-        lessonData: {title:string;videoUrl:string;duration:number;courseId:number},
+        lessonData: {
+            title: string;
+            videoUrl: string;
+            content?: string;
+            duration: number;
+            courseId: number;
+        },
         user: User
     ){
         const course = await courseRepository.findOne({
@@ -21,6 +27,7 @@ export class LessonService{
         const lesson = lessonRepository.create({
             title: lessonData.title,
             videoUrl: lessonData.videoUrl,
+            content: lessonData.content,
             duration: lessonData.duration,
             course,
         });
@@ -39,11 +46,15 @@ export class LessonService{
       }
       
 
-    async updateLesson(id: number, data: Pick<Partial<Lesson>, "title" | "videoUrl" | "duration">) {
+    async updateLesson(
+        id: number,
+        data: Pick<Partial<Lesson>, "title" | "videoUrl" | "content" | "duration">
+    ) {
         const lesson = await lessonRepository.findOne({ where: { id }, relations: ["course"] });
         if (!lesson) throw new Error("Lesson not found!");
         if (data.title !== undefined) lesson.title = data.title;
         if (data.videoUrl !== undefined) lesson.videoUrl = data.videoUrl;
+        if (data.content !== undefined) lesson.content = data.content;
         if (data.duration !== undefined) lesson.duration = data.duration;
         return lessonRepository.save(lesson);
     }

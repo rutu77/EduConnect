@@ -51,4 +51,6 @@ export const env = {
   publicApiUrl: (process.env.PUBLIC_API_URL?.trim() || `http://localhost:${port}`)
     .replace(/\/+$/, ""),
   corsOrigins,
+  geminiApiKey: process.env.GEMINI_API_KEY?.trim() || "",
+  geminiModel: process.env.GEMINI_MODEL?.trim() || "gemini-3.8-flash",
 };

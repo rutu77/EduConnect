@@ -7,8 +7,15 @@
     Enter a lesson title.
   </small>
 
-  <label for="update-lesson-video">Video URL <span class="optional-label">Optional</span></label>
+  <label for="update-lesson-video-file">Replace video file <span class="optional-label">Optional, MP4 or WebM, up to 100 MB</span></label>
+  <input id="update-lesson-video-file" type="file" accept="video/mp4,video/webm" (change)="onVideoSelected($event)">
+  <small *ngIf="selectedVideo" class="field-hint">Selected: {{ selectedVideo.name }}</small>
+
+  <label for="update-lesson-video">Or hosted video URL <span class="optional-label">Optional</span></label>
   <input id="update-lesson-video" formControlName="videoUrl" type="url">
+
+  <label for="update-lesson-content">Lesson content <span class="optional-label">Optional, up to 50,000 characters</span></label>
+  <textarea id="update-lesson-content" formControlName="content" rows="8" maxlength="50000"></textarea>
 
   <label for="update-lesson-duration">Duration <span class="optional-label">Minutes</span></label>
   <input id="update-lesson-duration" formControlName="duration" type="number" min="0" step="1" required>

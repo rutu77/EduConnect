@@ -22,8 +22,16 @@
     Enter a lesson title.
   </small>
 
-  <label for="lesson-video">Video URL <span class="optional-label">Optional</span></label>
+  <label for="lesson-video-file">Video file <span class="optional-label">Optional, MP4 or WebM, up to 100 MB</span></label>
+  <input id="lesson-video-file" type="file" accept="video/mp4,video/webm" (change)="onVideoSelected($event)">
+  <small *ngIf="selectedVideo" class="field-hint">Selected: {{ selectedVideo.name }}</small>
+
+  <label for="lesson-video">Or hosted video URL <span class="optional-label">Optional</span></label>
   <input id="lesson-video" type="url" formControlName="videoUrl" placeholder="https://…">
+
+  <label for="lesson-content">Lesson content <span class="optional-label">Optional, up to 50,000 characters</span></label>
+  <textarea id="lesson-content" formControlName="content" rows="8" maxlength="50000"
+    placeholder="Add notes or a transcript for this lesson"></textarea>
 
   <label for="lesson-duration">Duration <span class="optional-label">Minutes</span></label>
   <input id="lesson-duration" type="number" min="0" step="1" formControlName="duration" required>

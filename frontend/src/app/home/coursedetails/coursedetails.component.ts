@@ -34,6 +34,11 @@ export class CoursedetailsComponent implements OnInit, OnDestroy {
   lessonsError = '';
   quizzesError = '';
   reviewsError = '';
+  aiQuestion = '';
+  aiAnswer = '';
+  aiError = '';
+  aiSources: Array<{ lessonId: number; title: string }> = [];
+  isAskingAI = false;
   displayUpdateReviewDialog = false;
   displayAddReviewDialog = false;
   showEnrollDialog = false;
@@ -163,6 +168,30 @@ export class CoursedetailsComponent implements OnInit, OnDestroy {
 
   takeQuiz(quizId: number): void {
     void this.router.navigate(['/quiz/takeQuiz', quizId]);
+  }
+
+  askCourseQuestion(): void {
+    const question = this.aiQuestion.trim();
+    if (!question || this.isAskingAI) return;
+
+    this.isAskingAI = true;
+    this.aiAnswer = '';
+    this.aiError = '';
+    this.aiSources = [];
+    this.courseService.askCourseQuestion(this.courseId, question).subscribe({
+      next: (response) => {
+        this.aiAnswer = response.answer;
+        this.aiSources = response.sources;
+        this.isAskingAI = false;
+        this.changeDetector.markForCheck();
+      },
+      error: (error: any) => {
+        console.error('Unable to answer course question:', error);
+        this.aiError = error.error?.message || 'The AI tutor could not answer right now. Please try again.';
+        this.isAskingAI = false;
+        this.changeDetector.markForCheck();
+      }
+    });
   }
 
   loadEnrollments(): void {

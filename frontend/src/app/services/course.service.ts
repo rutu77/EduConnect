@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
-import { ApiResponse, Course, CourseCatalogResponse, CreateLesson, Lesson, Review } from '../models/model';
+import { ApiResponse, Course, CourseCatalogResponse, CourseQuestionAnswer, Lesson, Review } from '../models/model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -67,13 +67,13 @@ export class CourseService {
     return this.http.get<Lesson[]>(`${this.api}/lesson/`)
   }
 
-  addLesson(lesson: CreateLesson): Observable<ApiResponse<Lesson>> {
+  addLesson(lesson: FormData): Observable<ApiResponse<Lesson>> {
     return this.http.post<ApiResponse<Lesson>>(`${this.api}/lesson/`, lesson)
   }
 
   updateLesson(
     id: number,
-    lesson: Partial<Pick<Lesson, 'title' | 'videoUrl' | 'duration'>>
+    lesson: FormData
   ): Observable<ApiResponse<Lesson>> {
     return this.http.put<ApiResponse<Lesson>>(`${this.api}/lesson/${id}`, lesson)
   }
@@ -84,6 +84,12 @@ export class CourseService {
 
   getLessonByCourseId(courseId:number): Observable<ApiResponse<Lesson[]>> {
     return this.http.get<ApiResponse<Lesson[]>>(`${this.api}/lesson/course/${courseId}`)
+  }
+
+  askCourseQuestion(courseId: number, question: string): Observable<CourseQuestionAnswer> {
+    return this.http.post<CourseQuestionAnswer>(`${this.api}/ai/courses/${courseId}/questions`, {
+      question,
+    });
   }
 
 

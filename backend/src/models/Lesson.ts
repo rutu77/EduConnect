@@ -10,6 +10,9 @@ export class Lesson {
     @Column()
     title:string;
 
+    @Column({type:"text", nullable:true})
+    content?:string | null;
+
     @Column({nullable:true})
     videoUrl:string;
 
